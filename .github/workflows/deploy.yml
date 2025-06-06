@@ -58,11 +58,19 @@ jobs:
         run: |
           jq '.taskDefinition' new-task-def.json > register-task-def.json
 
+      - name: Debug: Print register-task-def.json
+        run: |
+          cat register-task-def.json
+
+      - name: Debug: List files in workspace
+        run: |
+          ls -l
+
       - name: Register new task definition
         id: register-task-def
         run: |
-        aws ecs register-task-definition --cli-input-json file://register-task-def.json > task-def-out.json
-        echo "taskDefArn=$(jq -r .taskDefinition.taskDefinitionArn task-def-out.json)" >> $GITHUB_OUTPUT
+          aws ecs register-task-definition --cli-input-json file://register-task-def.json > task-def-out.json
+          echo "taskDefArn=$(jq -r .taskDefinition.taskDefinitionArn task-def-out.json)" >> $GITHUB_OUTPUT
 
       - name: Update ECS service
         run: |
