@@ -7,7 +7,7 @@ on:
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: reelquotes-main-api
-  ECS_CLUSTER: ReelQuotesCluster
+  ECS_CLUSTER: ReelQuotesEcsServicesStack-ReelQuotesClusterE9605E0A-qiTGzDgOdNKt
   ECS_SERVICE: MainApiService
   CONTAINER_NAME: MainApiContainer
   ECS_TASK_DEFINITION: ReelQuotesEcsServicesStackMainApiTaskDef0B6A5887
