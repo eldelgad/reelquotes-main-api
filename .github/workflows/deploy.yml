@@ -65,7 +65,7 @@ jobs:
           jq --arg IMAGE "${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ steps.vars.outputs.sha }}" '.taskDefinition.containerDefinitions[0].image = $IMAGE' task-def.json > new-task-def.json
 
       - name: Register new task definition
-         id: register-task-def
+        id: register-task-def
         run: |
          aws ecs register-task-definition --cli-input-json file://register-task-def.json > task-def-out.json
          echo "taskDefArn=$(jq -r .taskDefinition.taskDefinitionArn task-def-out.json)" >> $GITHUB_OUTPUT
