@@ -1,3 +1,13 @@
+# DoD Checklist for Story 1.6
+# - Multi-stage Dockerfile present and optimized
+# - ECR repo exists and is used
+# - Workflow builds, tags, and pushes Docker image to ECR
+# - Workflow updates ECS service with new image
+# - Workflow runs on develop branch push
+# - All steps use official GitHub Actions
+# - AWS credentials/permissions are secure
+# - Service is healthy and reachable via ALB
+
 name: Deploy Main API to Staging
 
 on:
@@ -9,7 +19,8 @@ env:
   ECR_REPOSITORY: reelquotes-main-api
   ECS_CLUSTER: ReelQuotesCluster
   ECS_SERVICE: MainApiService
-  CONTAINER_NAME: NestJsContainer
+  CONTAINER_NAME: MainApiContainer
+  ECS_TASK_DEFINITION: ReelQuotesEcsServicesStackMainApiTaskDef0B6A5887
 
 jobs:
   deploy:
@@ -47,7 +58,7 @@ jobs:
 
       - name: Download ECS task definition
         run: |
-          aws ecs describe-task-definition --task-definition $ECS_SERVICE > task-def.json
+          aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION > task-def.json
 
       - name: Update task definition with new image
         run: |
