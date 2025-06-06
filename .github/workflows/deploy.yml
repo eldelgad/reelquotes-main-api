@@ -56,7 +56,7 @@ jobs:
 
       - name: Prepare register task definition input
         run: |
-          jq '.taskDefinition' new-task-def.json > register-task-def.json
+          jq '.taskDefinition | {family, taskRoleArn, executionRoleArn, networkMode, containerDefinitions, volumes, placementConstraints, requiresCompatibilities, cpu, memory, tags, pidMode, ipcMode, proxyConfiguration, inferenceAccelerators, ephemeralStorage, runtimePlatform, enableECSManagedTags, enableExecuteCommand}' new-task-def.json > register-task-def.json
 
       - name: Register new task definition
         id: register-task-def
