@@ -1,13 +1,3 @@
-# DoD Checklist for Story 1.6
-# - Multi-stage Dockerfile present and optimized
-# - ECR repo exists and is used
-# - Workflow builds, tags, and pushes Docker image to ECR
-# - Workflow updates ECS service with new image
-# - Workflow runs on develop branch push
-# - All steps use official GitHub Actions
-# - AWS credentials/permissions are secure
-# - Service is healthy and reachable via ALB
-
 name: Deploy Main API to Staging
 
 on:
@@ -64,12 +54,24 @@ jobs:
         run: |
           jq --arg IMAGE "${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ steps.vars.outputs.sha }}" '.taskDefinition.containerDefinitions[0].image = $IMAGE' task-def.json > new-task-def.json
 
+      - name: Prepare register task definition input
+        run: |
+          jq '.taskDefinition' new-task-def.json > register-task-def.json
+
+      - name: Debug: Print register-task-def.json
+        run: |
+          cat register-task-def.json
+
+      - name: Debug: List files in workspace
+        run: |
+          ls -l
+
       - name: Register new task definition
         id: register-task-def
         run: |
-          aws ecs register-task-definition --cli-input-json file://new-task-def.json > task-def-out.json
+          aws ecs register-task-definition --cli-input-json file://register-task-def.json > task-def-out.json
           echo "taskDefArn=$(jq -r .taskDefinition.taskDefinitionArn task-def-out.json)" >> $GITHUB_OUTPUT
 
       - name: Update ECS service
         run: |
-          aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --task-definition ${{ steps.register-task-def.outputs.taskDefArn }}
+          aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --task-definition ${{ steps.register-task-def.outputs.taskDefArn }} 
